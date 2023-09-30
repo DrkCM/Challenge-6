@@ -3,7 +3,7 @@ let currentQuestionIndex = 0;
 let time = questions.length * 15;
 let timerID;
 
-// HTML elements;
+// import DOM HTML elements;
 let questionsElement = document.getElementById('questions');
 let timerElement = document.getElementById('time');
 let choicesElement = document.getElementById('choices');
@@ -13,42 +13,47 @@ let initialElement = document.getElementById('initials');
 let feedBackElement = document.getElementById('feedback');
 
 
+// sound effects for RIGHT or WRONG answers
 let sfxRight = new Audio('assets/sfx/correct.wav');
 let sfxWrong = new Audio('assets/sfx/incorrect.wav');
 
+// This function is for abailable time for your answer
 function questionClick() {
-   if(this.value !== questions[currentQuestionIndex].answer) {
+   if(this.value !== questions[currentQuestionIndex].answer) { //if time is bigger than currentQuestionIndex you have time to answer
     time -= 15;
 
-    if(time < 0) {
+    if(time < 0) { // Time is 0 you have no more time to answer
         time = 0;
     }
 
     timerElement.textContent = time;
 
     sfxWrong.play();
-    feedBackElement.textContent = 'Wrong'
+    feedBackElement.textContent = 'Wrong' //if answer is wrong you will receive the wrong sound
    } else {
     sfxRight.play();
-    feedBackElement.textContent = 'Correct!';
+    feedBackElement.textContent = 'Correct!'; //if answer is good you will receive the good sound
    }
 
    feedBackElement.setAttribute('class', 'feedback');
 
-   setTimeout(function() {
+   //this function control the time out and hide the feedback (good/wrong)
+   setTimeout(function() { 
     feedBackElement.setAttribute('class', 'feedback hide')
    }, 1000);
 
    currentQuestionIndex++;
 
-   if(currentQuestionIndex === questions.length) {
+   // if there are no more questions end the game if there are more jump to the next,
+   if(currentQuestionIndex === questions.length) { 
     quizEnd()
    } else {
     getQuestion();
    }
 }
 
-function getQuestion() {
+//this function shows the question text
+function getQuestion() { 
    let currentQuestion = questions[currentQuestionIndex];
 
    let titleElement = document.getElementById('question-title');
@@ -57,6 +62,7 @@ function getQuestion() {
 
    choicesElement.innerHTML = "";
 
+    //this function show you the different answer you can choice
    currentQuestion.choices.forEach(function(choice, index) {
       let choiceButton = document.createElement('button');
 
@@ -71,19 +77,20 @@ function getQuestion() {
    }) 
 }
 
+// this function show you what happend when game is over
 function quizEnd() {
   clearInterval(timerID);
 
    let endScreenElement = document.getElementById('end-screen');
    endScreenElement.removeAttribute('class');
 
-   let finalScoreElement = document.getElementById('final-score');
+   let finalScoreElement = document.getElementById('final-score'); //show you your score
    finalScoreElement.textContent = time;
 
    questionsElement.setAttribute('class', 'hide');
 }
 
-function clockTick() {
+function clockTick() { //this function finsh the game when time is 0
    time--;
    timerElement.textContent = time;
 
@@ -92,6 +99,7 @@ function clockTick() {
    }
 }
 
+// This function start the game when you click the button
 function startQuiz() {
    let startScreenElement = document.getElementById('start-screen');
    startScreenElement.setAttribute('class', 'hide');
@@ -105,9 +113,11 @@ function startQuiz() {
    getQuestion();
 }
 
+// This function save your score in the scorespage
 function saveHighScore() {
    let initials = initialElement.value.trim();
 
+   // ask for your initial before save the score
    if(initials !== ""){
       let highScore = JSON.parse(localStorage.getItem('highscores')) || [];
       let newScore = {
@@ -115,6 +125,7 @@ function saveHighScore() {
         initials: initials
       }
    
+      // safe the scores
       highScore.push(newScore);
       localStorage.setItem('highscores', JSON.stringify(highScore));
 
@@ -122,15 +133,18 @@ function saveHighScore() {
     }
 }
 
+//save the result when you press enter
 function checkForEnter(event) {
    if(event.key === 'Enter') {
     saveHighScore();
    }
 }
 
-
+//start button
 startButton.addEventListener('click', startQuiz);
 
+//submit button
 submitButton.addEventListener('click', saveHighScore);
 
-initialElement.addEventListener('keyup', checkForEnter);
+//save initials after type
+initialElement.addEventListener('keyup', checkForEnter);  
