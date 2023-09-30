@@ -147,4 +147,4 @@ startButton.addEventListener('click', startQuiz);
 submitButton.addEventListener('click', saveHighScore);
 
 //save initials after type
-initialElement.addEventListener('keyup', checkForEnter);  
+initialElement.addEventListener('keyup', checkForEnter);
